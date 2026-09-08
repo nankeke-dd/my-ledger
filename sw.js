@@ -3,7 +3,7 @@
    注意：改动 index.html / style.css / script.js 后，
    请把下面的 CACHE 版本号 +1 再刷新，否则浏览器会用旧缓存。
    ========================================================= */
-const CACHE = 'fangge-ledger-v2';
+const CACHE = 'fangge-ledger-v3';
 const PRECACHE = [
   './',
   './index.html',

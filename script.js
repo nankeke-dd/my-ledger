@@ -114,7 +114,8 @@ const el = {
   savedNow: $('savedNow'), goalText: $('goalText'), goalPct: $('goalPct'),
   savingsFill: $('savingsFill'), savingsTrack: $('savingsTrack'), achieved: $('achieved'),
 
-  entryForm: $('entryForm'), catSel: $('catSel'), amtInput: $('amtInput'),
+  entryForm: $('entryForm'), fabAdd: $('fabAdd'), btnFold: $('btnFold'),
+  catSel: $('catSel'), amtInput: $('amtInput'),
   dateInput: $('dateInput'), noteInput: $('noteInput'), chipRow: $('chipRow'),
   saveWrap: $('saveWrap'), saveCheck: $('saveCheck'), addBtn: $('addBtn'),
 
@@ -398,19 +399,46 @@ function refreshAll() {
 /* ================= 视图切换 ================= */
 function applySalaryMode() {
   const has = !!state.salary;
-  hide(el.salarySet); hide(el.salaryView); hide(el.board); hide(el.intro); hide(el.entryForm);
+  hide(el.salarySet); hide(el.salaryView); hide(el.board); hide(el.intro);
   hide(el.btnCancelSalary);
   document.body.classList.toggle('has-panel', has);
   if (has) {
     show(el.salaryView);
     show(el.board);
-    show(el.entryForm);
+    el.entryForm.hidden = false;   // 抽屉常驻 DOM，仅靠 .open 控制收放
     refreshAll();
+    // 默认折叠：面板收进底部，只露出悬浮「＋ 记一笔」
+    closePanel(false);
   } else {
     show(el.salarySet);
     show(el.intro);
+    hide(el.entryForm);
+    el.entryForm.classList.remove('open');
+    document.body.classList.remove('panel-open');
+    hide(el.fabAdd);
   }
 }
+
+/* ---- 录入面板：展开 / 折叠（抽屉式） ---- */
+function openPanel() {
+  if (!state.salary) return;
+  el.entryForm.hidden = false;
+  document.body.classList.add('has-panel');
+  document.body.classList.add('panel-open');
+  el.entryForm.classList.add('open');      // 触发向上平滑滑入
+  hide(el.fabAdd);
+  el.entryForm.scrollTop = 0;
+  setTimeout(() => { try { el.amtInput.focus(); } catch (e) {} }, 360);
+}
+function closePanel(blurInput) {
+  el.entryForm.classList.remove('open');   // 触发向下滑出
+  document.body.classList.remove('panel-open');
+  if (state.salary) show(el.fabAdd);
+  if (!state.salary) { hide(el.entryForm); hide(el.fabAdd); }
+  if (blurInput) { try { el.amtInput.blur(); } catch (e) {} }
+}
+el.fabAdd.addEventListener('click', () => openPanel());
+el.btnFold.addEventListener('click', () => closePanel(true));
 
 el.salaryForm.addEventListener('submit', e => {
   e.preventDefault();
@@ -419,6 +447,8 @@ el.salaryForm.addEventListener('submit', e => {
 el.btnChangeSalary.addEventListener('click', () => startSalaryEdit());
 el.btnCancelSalary.addEventListener('click', () => applySalaryMode());
 function startSalaryEdit() {
+  closePanel(true);          // 收起录入抽屉，避免遮挡顶部编辑
+  hide(el.fabAdd);           // 编辑期间隐藏悬浮按钮，交给 applySalaryMode 恢复
   hide(el.salaryView);
   show(el.salarySet);
   show(el.btnCancelSalary);
@@ -608,6 +638,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     hide(el.sheetOverlay); hide(el.menuOverlay);
     hide(el.howOverlay); hide(el.noticeOverlay);
+    closePanel(true);
   }
 });
 

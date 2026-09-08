@@ -91,7 +91,7 @@
         <div class="achieved" id="achieved"></div>
       </section>
 
-      <p class="empty-tip" id="emptyTip" hidden>还没有任何记账。从底部面板添加第一笔吧 ☝️</p>
+      <p class="empty-tip" id="emptyTip" hidden>还没有任何记账。点屏幕下方「＋ 记一笔」展开面板，添加第一笔吧 ✨</p>
     </main>
 
     <!-- ============ 未设置月薪时的空状态 ============ -->
@@ -112,8 +112,16 @@
 
   </div>
 
-  <!-- ============ 底部固定录入面板 ============ -->
+  <!-- ============ 底部录入面板（默认折叠为悬浮按钮，点击展开） ============ -->
   <form class="panel glass" id="entryForm" hidden>
+    <div class="panel-top">
+      <span class="panel-title">＋ 记一笔</span>
+      <button type="button" class="fold-btn" id="btnFold" aria-label="收起面板，查看方格" title="收起">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
     <div class="panel-explain">
       <span class="pe-label">自定义分类说明：</span>
       <span class="pe-it"><i class="dot d-fixed"></i>固定</span><b class="pe-sep">、</b>
@@ -155,6 +163,14 @@
     <button type="submit" class="btn btn-primary btn-add" id="addBtn">＋ 增加</button>
   </form>
 
+  <!-- ============ 悬浮「＋ 记一笔」按钮（面板折叠时显示） ============ -->
+  <button type="button" class="fab glass" id="fabAdd" hidden aria-label="记一笔">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+      <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+    </svg>
+    <span>记一笔</span>
+  </button>
+
   <!-- ============ 分类明细 浮层 ============ -->
   <div class="overlay" id="sheetOverlay" hidden>
     <div class="sheet" role="dialog" aria-modal="true" aria-label="分类明细">
@@ -186,7 +202,7 @@
       <h3 class="card-title" style="margin:0 0 4px">方格记账怎么用？</h3>
       <div class="how-body">
         <p><b>1. 设置月薪</b>——顶部输入税后月薪，例如 8000，点击「生成方格」，得到 800 个白格（每格 10 元）。</p>
-        <p><b>2. 记一笔</b>——底部面板选分类、填金额、写备注，日期默认今天、可补记历史或预记未来。对应格子会被涂上分类颜色。</p>
+        <p><b>2. 记一笔</b>——点右下角悬浮「＋ 记一笔」展开录入抽屉，选分类、填金额、写备注，日期默认今天、可补记历史或预记未来；记完点右上角 ↓ 收起即可查看方格。对应格子会被涂上分类颜色。</p>
         <p><b>3. 自动合并</b>——同类消费自动靠拢，连成完整大方块，顺序固定：<b class="c-fixed">固定</b> → <b class="c-must">必须</b> → <b class="c-opt">非必须</b> → <b class="c-member">会员</b>。剩余白格每月底24点会自动结算金额，并纳入储蓄中。</p>
         <p><b>4. 点开色块</b>——点任意色块或上方图例，查看该分类全部流水（金额 / 备注 / 日期），可删除。</p>
         <p><b>5. 储蓄</b>——记「固定」账时勾选「记为储蓄」，立即计入储蓄里程碑；每月底自动结算的结余也会累加进去。</p>

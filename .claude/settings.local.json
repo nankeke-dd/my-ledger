@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --check script.js)",
+      "Bash(node --check sw.js)",
+      "Bash(git add *)",
+      "Bash(git commit -m '底部面板改抽屉式折叠交互 + 修复金额输入框移动端溢出 *)"
+    ]
+  }
+}
