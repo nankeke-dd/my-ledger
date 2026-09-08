@@ -487,3 +487,112 @@ body.has-panel.panel-open{ padding-bottom:calc(560px + var(--safe-b)); }
   .panel-top .panel-title{ font-size:13.5px; }
   .p-field .field-label{ font-size:11px; letter-spacing:.4px; }
 }
+
+/* =========================================================
+   方格记账 v2 — 储蓄/目标/发薪初始化/钱包模式
+   ========================================================= */
+
+/* ---- 顶部工资卡：三态（录入/已设/钱包） ---- */
+.wallet-view{ border-top:1px dashed var(--line); margin-top:10px; padding-top:12px; }
+
+/* ---- 深红超支格 ---- */
+.cell.over{ background:repeating-linear-gradient(135deg,#B23A2E 0 6px,#8E241B 6px 12px); }
+.cell.over:hover{ filter:brightness(.94); }
+.stat.oflow .stat-num{ color:var(--opt); }
+
+/* ---- 储蓄卡（总资产池） ---- */
+.save-card{ position:relative; overflow:hidden; }
+.save-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.save-label{ font-size:14px; font-weight:800; letter-spacing:.4px; }
+.save-val{
+  margin-top:10px; font-size:34px; font-weight:900; letter-spacing:.5px;
+  line-height:1.1; font-variant-numeric:tabular-nums;
+}
+.save-val.neg{ color:var(--opt); }
+.btn-direct{ flex:none; height:40px; border-radius:999px; padding:0 16px; font-size:14px;
+  background:var(--member); color:#fff; box-shadow:0 8px 18px -8px rgba(60,203,122,.7); }
+.btn-direct:active{ box-shadow:none; }
+.save-card .save-foot{ margin-top:12px; font-size:12px; color:var(--mut); }
+.save-card .save-foot b{ color:var(--ink); font-variant-numeric:tabular-nums; }
+
+/* ---- 里程碑卡（目标池 · 串行） ---- */
+.goal-card .savings-head{ margin-bottom:6px; }
+.goal-body-empty{ text-align:center; color:var(--mut); font-size:13px; padding:6px 0 2px; }
+.goal-tpls2{ display:flex; flex-wrap:wrap; gap:7px; margin:10px 0 2px; }
+.goal-tpls2 button{
+  border:1.2px solid var(--line); background:#fff; border-radius:999px;
+  font-size:12.5px; font-weight:700; padding:7px 13px; color:#575244;
+}
+.goal-tpls2 button:active{ background:rgba(0,0,0,.04); }
+.goal-tpls2 button small{ color:var(--mut); font-weight:600; margin-left:2px; }
+.current-goal{
+  background:#FBF9F4; border:1px solid var(--line); border-radius:var(--r-md);
+  padding:14px; margin-top:4px;
+}
+.current-goal .cg-top{ display:flex; align-items:center; gap:10px; }
+.current-goal .cg-name{ font-weight:800; font-size:17px; }
+.current-goal .cg-ic{ font-size:18px; }
+.current-goal .cg-sub{ font-size:12px; color:var(--mut); margin-left:auto; white-space:nowrap;
+  font-variant-numeric:tabular-nums; }
+.cg-track{ margin:12px 0 6px; }
+.cg-pred{ margin:8px 2px 0; font-size:13px; color:#4c4a43; }
+.cg-pred b{ color:var(--member); }
+.cg-pred .neg{ color:var(--opt); }
+.manual-row{ display:flex; align-items:center; gap:8px; margin-top:10px; font-size:12.5px;
+  color:var(--mut); }
+.manual-row input{
+  width:100px; height:36px; border:1.5px solid var(--line); border-radius:10px;
+  background:#fff; padding:0 10px; font-size:14px; font-weight:700; text-align:right;
+  font-variant-numeric:tabular-nums;
+}
+.manual-row input:focus{ outline:none; border-color:var(--ink); }
+.goal-achv{ display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+.goal-achv .ach-chip{ display:inline-flex; align-items:center; gap:5px;
+  font-size:11.5px; font-weight:700; color:#1E7A45;
+  background:rgba(60,203,122,.14); padding:4px 10px; border-radius:999px; }
+.goal-next-hint{ font-size:12px; color:var(--mut); margin-top:8px; }
+
+/* ---- 发薪状态浮层 ---- */
+.pay-opt{
+  background:#FBF9F4; border:1.5px solid var(--line); border-radius:var(--r-md);
+  padding:14px; margin-bottom:14px;
+}
+.pay-opt.alt{ background:#fff; border-style:dashed; }
+.pay-opt-head{ display:flex; align-items:center; gap:8px; }
+.pay-opt-head b{ font-size:15.5px; }
+.pay-badge{ font-size:10.5px; font-weight:800; color:var(--member);
+  background:rgba(60,203,122,.14); padding:2px 9px; border-radius:999px; letter-spacing:.3px; }
+.pay-badge.neutral{ color:var(--mut); background:rgba(0,0,0,.05); }
+.pay-desc{ margin:6px 0 0; font-size:12.5px; color:#575244; }
+.pay-form{ margin-top:12px; }
+.pay-form .p-field{ margin-bottom:10px; }
+.pay-form .btn-add{ margin-top:0; }
+
+/* ---- 直接储蓄浮层 / 目标管理浮层 ---- */
+#depOverlay .p-field{ margin-bottom:12px; }
+#goalOverlay .sheet-head{ padding-bottom:4px; }
+.goal-tpls{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.goal-tpl{
+  border:0; background:var(--accent); color:#fff; border-radius:var(--r-md);
+  padding:10px 16px; font-size:13.5px; font-weight:800; letter-spacing:.3px;
+  box-shadow:0 6px 14px -6px rgba(30,35,45,.4);
+}
+.goal-tpl:active{ transform:scale(.96); }
+.goal-list{ list-style:none; margin:14px 0 0; padding:0; }
+.goal-row{
+  display:flex; align-items:center; gap:10px; padding:12px 2px;
+  border-bottom:1px solid var(--line);
+}
+.goal-row .g-info{ min-width:0; flex:1; }
+.goal-row .g-name{ font-weight:700; font-size:14.5px; }
+.goal-row .g-meta{ font-size:11.5px; color:var(--mut); font-variant-numeric:tabular-nums; }
+.goal-row .g-done{ font-size:11px; font-weight:800; color:#1E7A45;
+  background:rgba(60,203,122,.14); padding:2px 8px; border-radius:999px; flex:none; }
+.del-goal{
+  border:0; background:rgba(239,83,80,.1); color:var(--opt);
+  width:32px; height:32px; border-radius:10px; font-weight:800; flex:none;
+}
+.del-goal:active{ background:var(--opt); color:#fff; }
+
+/* 无任何初始化时，隐藏工资卡（首次被发薪弹窗接管） */
+body.boot-pending .salary-card{ display:none; }

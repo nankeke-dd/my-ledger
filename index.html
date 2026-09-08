@@ -29,11 +29,11 @@
       </button>
     </header>
 
-    <!-- ============ 顶部 · 税后月薪 卡片 ============ -->
+    <!-- ============ 月薪卡（方格模式） ============ -->
     <section class="card salary-card" id="salaryCard" aria-label="税后月薪">
       <!-- 录入态 -->
-      <div class="salary-set" id="salarySet">
-        <label class="field-label" for="salaryInput">税后月薪（元）</label>
+      <div class="salary-set" id="salarySet" hidden>
+        <label class="field-label" for="salaryInput">本月税后月薪（元）</label>
         <form id="salaryForm" class="salary-form" autocomplete="off">
           <input id="salaryInput" class="money-input" type="number" inputmode="numeric" min="1"
                  step="any" placeholder="例如 8000" required />
@@ -43,76 +43,72 @@
         <p class="card-sub" id="salarySetHint">每格 = 10 元 → 8000 元会生成 800 个白色小方格</p>
       </div>
       <!-- 已设置态 -->
-      <div class="salary-view" id="salaryView" hidden>
-        <div class="field-label">税后月薪</div>
+      <div class="salary-view" id="salaryView">
+        <div class="field-label">本月工资</div>
         <div class="salary-view-row">
           <div class="salary-val"><span id="salaryNum">—</span><span class="unit">元 / 月</span></div>
           <div class="salary-total" id="salaryTotal">0 格</div>
           <button type="button" class="btn btn-ghost" id="btnChangeSalary">修改</button>
         </div>
       </div>
+      <!-- 钱包模式的提示态 -->
+      <div class="wallet-view" id="walletView" hidden>
+        <div class="field-label">本月状态 · 钱包模式</div>
+        <p class="card-sub" style="margin-top:6px">工资已到手、未生成方格：每笔消费直接从储蓄总池扣除，<b>＋直接储蓄</b> 可入账工资/奖金等。</p>
+        <button type="button" class="btn btn-ghost" id="btnSwitchToGrid">改为本月方格模式</button>
+      </div>
     </section>
 
-    <!-- ============ 主内容（设置月薪后显示） ============ -->
+    <!-- ============ 主内容（设置后显示） ============ -->
     <main id="board" hidden>
 
-      <!-- 本月统计 -->
+      <!-- 本月统计（标签随模式切换） -->
       <div class="stat-row" id="statRow" role="list">
-        <div class="stat"><span class="stat-num" id="statIncome">¥0</span><span class="stat-lab">月薪</span></div>
-        <div class="stat"><span class="stat-num" id="statSpent">¥0</span><span class="stat-lab">已支出</span></div>
-        <div class="stat"><span class="stat-num" id="statRemain">¥0</span><span class="stat-lab">剩余</span></div>
+        <div class="stat"><span class="stat-num" id="statA">¥0</span><span class="stat-lab" id="labA">月薪</span></div>
+        <div class="stat"><span class="stat-num" id="statB">¥0</span><span class="stat-lab" id="labB">已支出</span></div>
+        <div class="stat"><span class="stat-num" id="statC">¥0</span><span class="stat-lab" id="labC">剩余</span></div>
       </div>
 
-      <!-- 分类色块 / 图例（点击查看明细） -->
+      <!-- 分类图例（两种模式都显示，点开看明细） -->
       <div class="legend" id="legend" aria-label="分类图例"></div>
 
-      <!-- 方格区 -->
-      <div class="grid-wrap card">
-        <div class="grid" id="grid" role="img" aria-label="本月方格视图"></div>
+      <!-- 方格区（仅方格模式） -->
+      <div id="gridZone" hidden>
+        <div class="grid-wrap card">
+          <div class="grid" id="grid" role="img" aria-label="本月方格视图"></div>
+        </div>
+        <p class="hint" id="gridHint"></p>
       </div>
-      <p class="hint" id="gridHint">每格 = 10 元 · 不足 1 格按 1 格计 · 同类自动连成大方块（固定 → 必须 → 非必须 → 会员），点击色块查看 / 删除明细，点击白色格看剩余</p>
 
-      <!-- ============ 储蓄里程碑 ============ -->
-      <section class="card savings" id="savings">
-        <div class="savings-head">
-          <div>
-            <h2 class="card-title">储蓄里程碑</h2>
-            <p class="card-sub">来自「固定」分类中标记为储蓄的记账</p>
-          </div>
-          <div class="saved-now"><span id="savedNow">¥0</span><span class="unit">已存</span></div>
+      <!-- ============ 储蓄：总资产池 ============ -->
+      <section class="card save-card" id="saveCard">
+        <div class="save-head">
+          <div class="save-label">储蓄 · 总资产池</div>
+          <button type="button" class="btn btn-primary btn-direct" id="btnDirectSave">＋ 直接储蓄</button>
         </div>
-        <div class="goal-line" id="goalLine">
-          <span id="goalText">距 ¥10,000 还差 ¥10,000</span>
-          <span class="goal-pct" id="goalPct">0%</span>
-        </div>
-        <div class="track" id="savingsTrack" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-          <div class="track-fill" id="savingsFill"></div>
-        </div>
-        <div class="achieved" id="achieved"></div>
+        <div class="save-val" id="saveVal">¥0</div>
+        <p class="card-sub" id="saveSub">手动存入工资/奖金/其他收入，或每月方格结余自动并入。</p>
+        <div class="save-foot" id="saveFoot"></div>
       </section>
 
-      <p class="empty-tip" id="emptyTip" hidden>还没有任何记账。点屏幕下方「＋ 记一笔」展开面板，添加第一笔吧 ✨</p>
-    </main>
+      <!-- ============ 里程碑：目标池（串行达成） ============ -->
+      <section class="card goal-card" id="goalCard">
+        <div class="savings-head">
+          <div>
+            <h2 class="card-title">🎯 里程碑 · 目标池</h2>
+            <p class="card-sub" id="goalSub">储蓄池向第一个目标推进，达成后自动轮到下一个。</p>
+          </div>
+          <button type="button" class="btn btn-ghost" id="btnGoalMgr">管理目标</button>
+        </div>
+        <div id="goalBody"></div>
+      </section>
 
-    <!-- ============ 未设置月薪时的空状态 ============ -->
-    <main class="intro card" id="intro" hidden>
-      <div class="intro-illus" aria-hidden="true">
-        <span class="ix ix-fixed"></span><span class="ix ix-must"></span>
-        <span class="ix ix-opt"></span><span class="ix ix-member"></span><span class="ix ix-w"></span>
-      </div>
-      <h2>把月薪变成看得见的小方格</h2>
-      <p>在上面输入税后月薪后，按「10 元 = 1 格」生成方格。每次消费涂掉对应方格；同类消费会<span>自动合并成一块连续的大色块</span>。剩余白格是本月底 24 点前还能花的钱——跨月时会自动结算，变成储蓄。</p>
-      <ul class="rule-list">
-        <li><i class="dot d-fixed"></i>固定 —— 房租、话费、储蓄、长期目标</li>
-        <li><i class="dot d-must"></i>必须 —— 吃饭、通勤、日常消耗、书籍画材课程</li>
-        <li><i class="dot d-opt"></i>非必须 —— 奶茶咖啡大餐、情绪消费</li>
-        <li><i class="dot d-member"></i>会员 —— 年费会员平摊等</li>
-      </ul>
+      <p class="empty-tip" id="emptyTip" hidden>本月还没有记账。点屏幕下方「＋ 记一笔」展开面板，添加第一笔吧 ✨</p>
     </main>
 
   </div>
 
-  <!-- ============ 底部录入面板（默认折叠为悬浮按钮，点击展开） ============ -->
+  <!-- ============ 底部录入面板（抽屉） ============ -->
   <form class="panel glass" id="entryForm" hidden>
     <div class="panel-top">
       <span class="panel-title">＋ 记一笔</span>
@@ -121,13 +117,6 @@
           <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
-    </div>
-    <div class="panel-explain">
-      <span class="pe-label">自定义分类说明：</span>
-      <span class="pe-it"><i class="dot d-fixed"></i>固定</span><b class="pe-sep">、</b>
-      <span class="pe-it"><i class="dot d-must"></i>必须</span><b class="pe-sep">、</b>
-      <span class="pe-it"><i class="dot d-opt"></i>非必须</span><b class="pe-sep">、</b>
-      <span class="pe-it"><i class="dot d-member"></i>会员</span>
     </div>
 
     <div class="p-row">
@@ -152,24 +141,126 @@
       <input id="noteInput" class="text-input" type="text" maxlength="30" placeholder="写点什么…" />
     </div>
 
-    <div class="chips" id="chipRow"></div>
-
-    <label class="save-toggle" id="saveWrap" hidden>
-      <input type="checkbox" id="saveCheck" />
-      <span class="toggle-ui" aria-hidden="true"></span>
-      <span class="toggle-text">这笔记为「储蓄」，计入下方储蓄里程碑</span>
-    </label>
-
-    <button type="submit" class="btn btn-primary btn-add" id="addBtn">＋ 增加</button>
+    <button type="submit" class="btn btn-primary btn-add" id="addBtn">＋ 记录这笔支出</button>
   </form>
 
-  <!-- ============ 悬浮「＋ 记一笔」按钮（面板折叠时显示） ============ -->
+  <!-- 悬浮「＋ 记一笔」按钮 -->
   <button type="button" class="fab glass" id="fabAdd" hidden aria-label="记一笔">
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
       <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
     </svg>
     <span>记一笔</span>
   </button>
+
+  <!-- ============ 发薪状态初始化 浮层 ============ -->
+  <div class="overlay" id="payOverlay" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="本月发薪状态">
+      <div class="sheet-grab" aria-hidden="true"></div>
+      <h3 class="card-title" style="margin:0 0 4px">📅 本月发薪状态？</h3>
+      <div class="how-body" style="margin-bottom:14px">
+        <p style="font-size:13px;margin:0">给「固定月薪」用户的设计：先告诉我们这个月工资到手了没有，好决定用方格预算还是直接扣钱。</p>
+      </div>
+
+      <!-- 选项 B：未发工资 · 方格模式 -->
+      <div class="pay-opt" id="optGrid">
+        <div class="pay-opt-head">
+          <b>未发工资 · 方格模式</b>
+          <span class="pay-badge">推荐 · 预算感强</span>
+        </div>
+        <p class="pay-desc">工资还没到账：输入本月工资生成小方格，消费涂格子，月底剩余自动并入储蓄、花超自动从储蓄扣除。</p>
+        <form id="payFormGrid" class="pay-form" autocomplete="off">
+          <div class="p-field">
+            <label class="field-label" for="payGridSalary">本月税后月薪（元）</label>
+            <input id="payGridSalary" class="money-input" type="number" inputmode="numeric" min="1"
+                   step="any" placeholder="例如 8000" required />
+          </div>
+          <div class="p-field">
+            <label class="field-label" for="payGridSave">已有储蓄（选填，将并入总资产池）</label>
+            <input id="payGridSave" class="money-input" type="number" inputmode="decimal" min="0"
+                   step="any" placeholder="0" />
+          </div>
+          <button type="submit" class="btn btn-primary btn-add">开始，生成方格</button>
+        </form>
+      </div>
+
+      <!-- 选项 A：已发工资 · 钱包模式 -->
+      <div class="pay-opt alt" id="optWallet">
+        <div class="pay-opt-head">
+          <b>已发工资 · 钱包模式</b>
+          <span class="pay-badge neutral">无方格</span>
+        </div>
+        <p class="pay-desc">工资已经到手（比如刚发）：不需要方格预算，只把现有储蓄记成总资产池；之后每一笔消费直接从储蓄池扣除。下月会再让你重填工资。</p>
+        <form id="payFormWallet" class="pay-form" autocomplete="off">
+          <div class="p-field">
+            <label class="field-label" for="payWalletSave">现有储蓄（元，总存款 / 已有余额）</label>
+            <input id="payWalletSave" class="money-input" type="number" inputmode="decimal" min="0"
+                   step="any" placeholder="例如 30000" required />
+          </div>
+          <button type="submit" class="btn btn-primary btn-add">开始，钱包模式</button>
+        </form>
+      </div>
+
+      <!-- 仅在“重新打开（切换）”时显示 -->
+      <button type="button" class="btn btn-ghost sheet-close" id="btnClosePay" hidden>暂不改变 · 关闭</button>
+    </div>
+  </div>
+
+  <!-- ============ 直接储蓄 浮层 ============ -->
+  <div class="overlay" id="depOverlay" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="直接储蓄">
+      <div class="sheet-grab" aria-hidden="true"></div>
+      <h3 class="card-title" style="margin:0 0 4px">💾 直接储蓄</h3>
+      <div class="how-body" style="margin-bottom:12px">
+        <p style="font-size:12.5px;margin:0;color:var(--mut)">把现有存款 / 奖金 / 非固定月薪的其他收入直接并入总资产池。</p>
+      </div>
+      <form id="depForm" autocomplete="off">
+        <div class="p-field">
+          <label class="field-label" for="depAmount">金额（元）</label>
+          <input id="depAmount" class="money-input" type="number" inputmode="decimal" min="0.01"
+                 step="any" placeholder="0.00" required />
+        </div>
+        <div class="p-field">
+          <label class="field-label" for="depNote">来源备注（选填）</label>
+          <input id="depNote" class="text-input" type="text" maxlength="30" placeholder="例：年中奖金 / 旧存款 / 兼职收入" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-add">并入储蓄池</button>
+      </form>
+      <button class="btn btn-ghost sheet-close" id="btnCloseDep">取消</button>
+    </div>
+  </div>
+
+  <!-- ============ 目标管理 浮层 ============ -->
+  <div class="overlay" id="goalOverlay" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="目标管理">
+      <div class="sheet-grab" aria-hidden="true"></div>
+      <header class="sheet-head">
+        <div class="sheet-title"><h3>🎯 管理目标</h3></div>
+      </header>
+
+      <div class="goal-tpls">
+        <button type="button" class="goal-tpl" data-name="买房" data-target="500000">🏠 买房</button>
+        <button type="button" class="goal-tpl" data-name="买车" data-target="120000">🚗 买车</button>
+        <button type="button" class="goal-tpl" data-name="应急金" data-target="60000">🧯 应急金</button>
+      </div>
+      <form id="goalForm" class="pay-form" autocomplete="off">
+        <div class="p-row">
+          <div class="p-field p-cat">
+            <label class="field-label" for="goalName">目标名称</label>
+            <input id="goalName" class="text-input" type="text" maxlength="12" placeholder="如：旅行基金" required />
+          </div>
+          <div class="p-field p-amt">
+            <label class="field-label" for="goalTarget">目标金额（元）</label>
+            <input id="goalTarget" class="money-input" type="number" inputmode="decimal" min="1"
+                   step="any" placeholder="100000" required />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-add">＋ 添加目标</button>
+      </form>
+
+      <ul class="goal-list" id="goalList"></ul>
+      <button class="btn btn-ghost sheet-close" id="btnCloseGoal">完成</button>
+    </div>
+  </div>
 
   <!-- ============ 分类明细 浮层 ============ -->
   <div class="overlay" id="sheetOverlay" hidden>
@@ -188,7 +279,10 @@
   <!-- ============ 菜单浮层 ============ -->
   <div class="overlay" id="menuOverlay" hidden>
     <div class="menu" role="menu">
-      <button class="menu-item" id="miSalary">✏️ 修改税后月薪</button>
+      <button class="menu-item" id="miPay">📅 本月发薪状态</button>
+      <button class="menu-item" id="miDirectSave">💾 直接储蓄</button>
+      <button class="menu-item" id="miGoalMgr">🎯 管理目标</button>
+      <button class="menu-item" id="miSalary">✏️ 修改本月工资</button>
       <button class="menu-item" id="miReset">🗑 清空本月支出</button>
       <button class="menu-item" id="miResetAll">🧹 重置本地数据</button>
       <button class="menu-item" id="miHow">❓ 使用说明</button>
@@ -201,17 +295,17 @@
       <div class="sheet-grab" aria-hidden="true"></div>
       <h3 class="card-title" style="margin:0 0 4px">方格记账怎么用？</h3>
       <div class="how-body">
-        <p><b>1. 设置月薪</b>——顶部输入税后月薪，例如 8000，点击「生成方格」，得到 800 个白格（每格 10 元）。</p>
-        <p><b>2. 记一笔</b>——点右下角悬浮「＋ 记一笔」展开录入抽屉，选分类、填金额、写备注，日期默认今天、可补记历史或预记未来；记完点右上角 ↓ 收起即可查看方格。对应格子会被涂上分类颜色。</p>
-        <p><b>3. 自动合并</b>——同类消费自动靠拢，连成完整大方块，顺序固定：<b class="c-fixed">固定</b> → <b class="c-must">必须</b> → <b class="c-opt">非必须</b> → <b class="c-member">会员</b>。剩余白格每月底24点会自动结算金额，并纳入储蓄中。</p>
-        <p><b>4. 点开色块</b>——点任意色块或上方图例，查看该分类全部流水（金额 / 备注 / 日期），可删除。</p>
-        <p><b>5. 储蓄</b>——记「固定」账时勾选「记为储蓄」，立即计入储蓄里程碑；每月底自动结算的结余也会累加进去。</p>
-        <p class="fine">数据只存在你的浏览器 localStorage 里，不联网。每次打开时若检测到跨月会自动结算并开启新的一月；菜单里可「清空本月支出」或「重置本地数据」。</p>
+        <p><b>1. 发薪状态</b>——首次使用先选本月工资「已发/未发」。未发走方格模式生成 800 格预算（每格 10 元）；已发走钱包模式，只记总资产池、消费直接扣钱。</p>
+        <p><b>2. 方格模式</b>——消费涂掉对应方格，同类自动合并成大方块。月底 24 点自动结算：剩余白格并入储蓄，花超（红格）自动从储蓄池补差。下个月默认沿用本月工资生成新方格，可点「修改」。</p>
+        <p><b>3. 钱包模式</b>——工资已到手时不生成方格；点储蓄卡上的「＋直接储蓄」把工资/奖金存入总资产池，日常消费从池子直接扣。跨月后需要重填本月工资。</p>
+        <p><b>4. 储蓄与目标</b>——储蓄是<b>总资产池</b>；里程碑是<b>目标池</b>（买房/买车…串行达成）。储蓄池存满当前目标后自动推进到下一个，并按近 3 个月平均结余预测「预计 X 个月后达成」。</p>
+        <p><b>5. 点开色块</b>——点任意色块或上方图例查看该分类流水，可删除；点白色格看剩余。</p>
+        <p class="fine">数据只存在浏览器 localStorage，不联网。跨月自动结算；菜单可「清空本月支出」或「重置本地数据」。</p>
         <h4>各分类颜色 · 主要含义</h4>
         <ul class="rule-list">
-          <li><i class="dot d-fixed"></i>固定（冷蓝）—— 房租、话费、储蓄、长期目标等</li>
-          <li><i class="dot d-must"></i>必须（橙黄）—— 吃饭、通勤、日常消耗、精神食粮（书籍/画材/课程）等</li>
-          <li><i class="dot d-opt"></i>非必须（红）—— 奶茶、咖啡、大餐、冲动型玩具等情绪消费</li>
+          <li><i class="dot d-fixed"></i>固定（冷蓝）—— 房租、话费、长期缴费等</li>
+          <li><i class="dot d-must"></i>必须（橙黄）—— 吃饭、通勤、日常消耗、书籍课程等</li>
+          <li><i class="dot d-opt"></i>非必须（红）—— 奶茶、咖啡、大餐、情绪消费</li>
           <li><i class="dot d-member"></i>会员（绿）—— 年费会员平摊等</li>
         </ul>
       </div>
@@ -219,7 +313,7 @@
     </div>
   </div>
 
-  <!-- ============ 自动结算 / 提示 浮层 ============ -->
+  <!-- ============ 结算 / 提示 浮层 ============ -->
   <div class="overlay" id="noticeOverlay" hidden>
     <div class="sheet" role="dialog" aria-modal="true">
       <div class="sheet-grab" aria-hidden="true"></div>
