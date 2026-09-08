@@ -1,0 +1,19 @@
+{
+  "name": "方格记账 · 方格账本",
+  "short_name": "方格记账",
+  "description": "把月薪变成 10 元一格的小方格：极简移动端记账，同类消费自动合并成大方块，支持储蓄里程碑。",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F4F1EA",
+  "theme_color": "#F5A623",
+  "categories": ["finance", "productivity", "utilities"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

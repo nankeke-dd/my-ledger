@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#F4F1EA" />
+  <meta name="description" content="方格记账 · 把月薪变成 10 元一格的小方格，极简移动端记账。" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>方格记账</title>
+  <link rel="icon" href="icon-192.png" type="image/png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="stage">
+
+    <!-- ============ 顶栏 ============ -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo" aria-hidden="true"></span>
+        <h1>方格记账</h1>
+      </div>
+      <button class="icon-btn" id="btnMenu" aria-label="菜单" title="菜单">
+        <span class="dots" aria-hidden="true"></span>
+      </button>
+    </header>
+
+    <!-- ============ 顶部 · 税后月薪 卡片 ============ -->
+    <section class="card salary-card" id="salaryCard" aria-label="税后月薪">
+      <!-- 录入态 -->
+      <div class="salary-set" id="salarySet">
+        <label class="field-label" for="salaryInput">税后月薪（元）</label>
+        <form id="salaryForm" class="salary-form" autocomplete="off">
+          <input id="salaryInput" class="money-input" type="number" inputmode="numeric" min="1"
+                 step="any" placeholder="例如 8000" required />
+          <button type="button" class="btn btn-ghost" id="btnCancelSalary" hidden>取消</button>
+          <button type="submit" class="btn btn-primary">生成方格</button>
+        </form>
+        <p class="card-sub" id="salarySetHint">每格 = 10 元 → 8000 元会生成 800 个白色小方格</p>
+      </div>
+      <!-- 已设置态 -->
+      <div class="salary-view" id="salaryView" hidden>
+        <div class="field-label">税后月薪</div>
+        <div class="salary-view-row">
+          <div class="salary-val"><span id="salaryNum">—</span><span class="unit">元 / 月</span></div>
+          <div class="salary-total" id="salaryTotal">0 格</div>
+          <button type="button" class="btn btn-ghost" id="btnChangeSalary">修改</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 主内容（设置月薪后显示） ============ -->
+    <main id="board" hidden>
+
+      <!-- 本月统计 -->
+      <div class="stat-row" id="statRow" role="list">
+        <div class="stat"><span class="stat-num" id="statIncome">¥0</span><span class="stat-lab">月薪</span></div>
+        <div class="stat"><span class="stat-num" id="statSpent">¥0</span><span class="stat-lab">已支出</span></div>
+        <div class="stat"><span class="stat-num" id="statRemain">¥0</span><span class="stat-lab">剩余</span></div>
+      </div>
+
+      <!-- 分类色块 / 图例（点击查看明细） -->
+      <div class="legend" id="legend" aria-label="分类图例"></div>
+
+      <!-- 方格区 -->
+      <div class="grid-wrap card">
+        <div class="grid" id="grid" role="img" aria-label="本月方格视图"></div>
+      </div>
+      <p class="hint" id="gridHint">每格 = 10 元 · 不足 1 格按 1 格计 · 同类自动连成大方块（固定 → 必须 → 非必须 → 会员），点击色块查看 / 删除明细，点击白色格看剩余</p>
+
+      <!-- ============ 储蓄里程碑 ============ -->
+      <section class="card savings" id="savings">
+        <div class="savings-head">
+          <div>
+            <h2 class="card-title">储蓄里程碑</h2>
+            <p class="card-sub">来自「固定」分类中标记为储蓄的记账</p>
+          </div>
+          <div class="saved-now"><span id="savedNow">¥0</span><span class="unit">已存</span></div>
+        </div>
+        <div class="goal-line" id="goalLine">
+          <span id="goalText">距 ¥10,000 还差 ¥10,000</span>
+          <span class="goal-pct" id="goalPct">0%</span>
+        </div>
+        <div class="track" id="savingsTrack" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="track-fill" id="savingsFill"></div>
+        </div>
+        <div class="achieved" id="achieved"></div>
+      </section>
+
+      <p class="empty-tip" id="emptyTip" hidden>还没有任何记账。从底部面板添加第一笔吧 ☝️</p>
+    </main>
+
+    <!-- ============ 未设置月薪时的空状态 ============ -->
+    <main class="intro card" id="intro" hidden>
+      <div class="intro-illus" aria-hidden="true">
+        <span class="ix ix-fixed"></span><span class="ix ix-must"></span>
+        <span class="ix ix-opt"></span><span class="ix ix-member"></span><span class="ix ix-w"></span>
+      </div>
+      <h2>把月薪变成看得见的小方格</h2>
+      <p>在上面输入税后月薪后，按「10 元 = 1 格」生成方格。每次消费涂掉对应方格；同类消费会<span>自动合并成一块连续的大色块</span>。剩余白格是本月底 24 点前还能花的钱——跨月时会自动结算，变成储蓄。</p>
+      <ul class="rule-list">
+        <li><i class="dot d-fixed"></i>固定 —— 房租、话费、储蓄、长期目标</li>
+        <li><i class="dot d-must"></i>必须 —— 吃饭、通勤、日常消耗、书籍画材课程</li>
+        <li><i class="dot d-opt"></i>非必须 —— 奶茶咖啡大餐、情绪消费</li>
+        <li><i class="dot d-member"></i>会员 —— 年费会员平摊等</li>
+      </ul>
+    </main>
+
+  </div>
+
+  <!-- ============ 底部固定录入面板 ============ -->
+  <form class="panel glass" id="entryForm" hidden>
+    <div class="panel-explain">
+      <span class="pe-label">自定义分类说明：</span>
+      <span class="pe-it"><i class="dot d-fixed"></i>固定</span><b class="pe-sep">、</b>
+      <span class="pe-it"><i class="dot d-must"></i>必须</span><b class="pe-sep">、</b>
+      <span class="pe-it"><i class="dot d-opt"></i>非必须</span><b class="pe-sep">、</b>
+      <span class="pe-it"><i class="dot d-member"></i>会员</span>
+    </div>
+
+    <div class="p-row">
+      <div class="p-field p-cat">
+        <label class="field-label" for="catSel">分类</label>
+        <select id="catSel" class="select"></select>
+      </div>
+      <div class="p-field p-amt">
+        <label class="field-label" for="amtInput">金额（元）</label>
+        <input id="amtInput" class="money-input" type="number" inputmode="decimal" min="0.01"
+               step="any" placeholder="0.00" required />
+      </div>
+    </div>
+
+    <div class="p-field">
+      <label class="field-label" for="dateInput">日期（默认今天，可补记历史 / 预记未来）</label>
+      <input id="dateInput" class="date-input" type="date" />
+    </div>
+
+    <div class="p-field">
+      <label class="field-label" for="noteInput">备注（选填）</label>
+      <input id="noteInput" class="text-input" type="text" maxlength="30" placeholder="写点什么…" />
+    </div>
+
+    <div class="chips" id="chipRow"></div>
+
+    <label class="save-toggle" id="saveWrap" hidden>
+      <input type="checkbox" id="saveCheck" />
+      <span class="toggle-ui" aria-hidden="true"></span>
+      <span class="toggle-text">这笔记为「储蓄」，计入下方储蓄里程碑</span>
+    </label>
+
+    <button type="submit" class="btn btn-primary btn-add" id="addBtn">＋ 增加</button>
+  </form>
+
+  <!-- ============ 分类明细 浮层 ============ -->
+  <div class="overlay" id="sheetOverlay" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="分类明细">
+      <div class="sheet-grab" aria-hidden="true"></div>
+      <header class="sheet-head">
+        <div class="sheet-title"><i class="dot" id="sheetDot"></i><h3 id="sheetTitle">必须</h3></div>
+        <div class="sheet-total"><span id="sheetCount">0 笔</span><b id="sheetSum">¥0</b></div>
+      </header>
+      <ul class="sheet-list" id="sheetList"></ul>
+      <p class="sheet-empty" id="sheetEmpty" hidden>该分类下还没有记录</p>
+      <button class="btn btn-ghost sheet-close" id="btnCloseSheet">收起</button>
+    </div>
+  </div>
+
+  <!-- ============ 菜单浮层 ============ -->
+  <div class="overlay" id="menuOverlay" hidden>
+    <div class="menu" role="menu">
+      <button class="menu-item" id="miSalary">✏️ 修改税后月薪</button>
+      <button class="menu-item" id="miReset">🗑 清空本月支出</button>
+      <button class="menu-item" id="miResetAll">🧹 重置本地数据</button>
+      <button class="menu-item" id="miHow">❓ 使用说明</button>
+    </div>
+  </div>
+
+  <!-- ============ 使用说明 浮层 ============ -->
+  <div class="overlay" id="howOverlay" hidden>
+    <div class="sheet" role="dialog" aria-modal="true">
+      <div class="sheet-grab" aria-hidden="true"></div>
+      <h3 class="card-title" style="margin:0 0 4px">方格记账怎么用？</h3>
+      <div class="how-body">
+        <p><b>1. 设置月薪</b>——顶部输入税后月薪，例如 8000，点击「生成方格」，得到 800 个白格（每格 10 元）。</p>
+        <p><b>2. 记一笔</b>——底部面板选分类、填金额、写备注，日期默认今天、可补记历史或预记未来。对应格子会被涂上分类颜色。</p>
+        <p><b>3. 自动合并</b>——同类消费自动靠拢，连成完整大方块，顺序固定：<b class="c-fixed">固定</b> → <b class="c-must">必须</b> → <b class="c-opt">非必须</b> → <b class="c-member">会员</b>。剩余白格每月底24点会自动结算金额，并纳入储蓄中。</p>
+        <p><b>4. 点开色块</b>——点任意色块或上方图例，查看该分类全部流水（金额 / 备注 / 日期），可删除。</p>
+        <p><b>5. 储蓄</b>——记「固定」账时勾选「记为储蓄」，立即计入储蓄里程碑；每月底自动结算的结余也会累加进去。</p>
+        <p class="fine">数据只存在你的浏览器 localStorage 里，不联网。每次打开时若检测到跨月会自动结算并开启新的一月；菜单里可「清空本月支出」或「重置本地数据」。</p>
+        <h4>各分类颜色 · 主要含义</h4>
+        <ul class="rule-list">
+          <li><i class="dot d-fixed"></i>固定（冷蓝）—— 房租、话费、储蓄、长期目标等</li>
+          <li><i class="dot d-must"></i>必须（橙黄）—— 吃饭、通勤、日常消耗、精神食粮（书籍/画材/课程）等</li>
+          <li><i class="dot d-opt"></i>非必须（红）—— 奶茶、咖啡、大餐、冲动型玩具等情绪消费</li>
+          <li><i class="dot d-member"></i>会员（绿）—— 年费会员平摊等</li>
+        </ul>
+      </div>
+      <button class="btn btn-ghost sheet-close" id="btnCloseHow">知道了</button>
+    </div>
+  </div>
+
+  <!-- ============ 自动结算 / 提示 浮层 ============ -->
+  <div class="overlay" id="noticeOverlay" hidden>
+    <div class="sheet" role="dialog" aria-modal="true">
+      <div class="sheet-grab" aria-hidden="true"></div>
+      <h3 class="card-title" id="noticeTitle" style="margin:0 0 4px">🎉 自动结算完成</h3>
+      <div class="how-body"><p id="noticeBody"></p></div>
+      <button class="btn btn-ghost sheet-close" id="btnCloseNotice">知道了</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
